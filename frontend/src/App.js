@@ -1,13 +1,20 @@
-import React from 'react';
-import './App.css';
-import io from 'socket.io-client'
-const socket = io.connect(`http://localhost:${process.env.PORT || 8000}`)
+import React from 'react'
+import './App.css'
+import Main from './pages/Main'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 function App() {
   return (
-    <div className="App">
-      Hi
-    </div>
+    <>
+      <Router>
+        <Routes>
+          <Route path='/' element={<Main />} />
+        </Routes>
+      </Router>
+      <ToastContainer />
+    </>
   );
 }
 

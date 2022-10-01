@@ -1,39 +1,571 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700&display=swap');
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+:root {
+  --dark: #1C2126;
+  --grey: #20252B;
+  --greenBet: #5DB76E;
+  --redBet: #D4594C;
+  --blackBet: #393939;
+  --blueButton: #1475E1;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-float infinite 3s ease-in-out;
-  }
+#root {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
 }
 
-.App-header {
-  min-height: 100vh;
+#blur {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#wall {
+  display: none;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  z-index: 500;
+  background-color: transparent;
+  filter: 'blur(2px)';
+}
+
+/* Header */
+/* Header */
+/* Header */
+
+.header {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 73px;
+  background-color: var(--grey);
+}
+
+.user-name,
+.user-coins {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 200px;
+  top: 0;
+  color: white;
+  height: 100%;
+  font-size: 14px;
+}
+
+.user-coins {
+  right: 400px;
+}
+
+.header-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 100px;
+  top: 0;
+  height: 100%;
+}
+
+.header-buttons button {
+  border: none;
+  background-color: transparent;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 15px;
+}
+
+.coins-image-header {
+  margin-right: 10px;
+  width: 35px;
+  height: 35px;
+}
+
+#register-button {
+  background-color: var(--blueButton);
+  border-radius: 10px;
+  transition: .3s;
+}
+
+#register-button:hover {
+  background-color: #2a7edd;
+}
+
+button.logout {
+  background-color: var(--blueButton);
+  border-radius: 6px;
+  transition: .3s;
+}
+
+button.logout:hover {
+  background-color: #2a7edd;
+}
+
+/* Chat */
+/* Chat */
+/* Chat */
+
+.chat {
+  position: absolute;
+  left: 0;
+  top: 73px;
+  width: 360px;
+  height: 864px;
+}
+
+#chat-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 800px;
+  background-color: var(--grey);
+  overflow: hidden;
+}
+
+.chat form,
+.login-chat {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 64px;
+  width: 100%;
+  background-color: var(--grey);
+  border-top: 1px solid grey;
+}
+
+.login-chat {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat form input {
+  background-color: var(--grey);
+  height: 100%;
+  width: 100%;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 10px;
+}
+
+.message-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 80px;
+  color: white;
+}
+
+.message {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+  height: 100%;
+  flex-grow: 1;
+  padding: 4px;
+  font-size: 14px;
 }
 
-.App-link {
-  color: rgb(112, 76, 182);
+.message .user-nickname {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 20px;
+  width: 100%;
+  font-weight: 500;
 }
 
-@keyframes App-logo-float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
+.message .msg {
+  height: 51px;
+  width: 273px;
+  word-wrap: break-word;
+  overflow: hidden;
+  font-weight: 500;
+}
+
+.avatar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 79px;
+}
+
+.avatar img {
+  width: 70px;
+  height: 70px;
+}
+
+/* Roulette */
+/* Roulette */
+/* Roulette */
+
+.roulette {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: calc(100vh - 73px);
+  width: calc(100% - 360px);
+  overflow: hidden;
+  background-color: var(--dark);
+}
+
+.roulette-container {
+  position: absolute;
+  left: 50%;
+  top: 8%;
+  transform: translateX(-50%);
+  width: 1472px;
+  height: 100px;
+  overflow: hidden;
+}
+
+.roulette-timer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, .6);
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+  color: white;
+}
+
+.active-roll::after {
+  content: "";
+  width: 2px;
+  height: 100%;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  background-color: yellow;
+}
+
+.roulette-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 640px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.bet-value-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-color: var(--grey);
+  overflow: hidden;
+  border-radius: 6px;
+  height: 55px;
+  border: 1px solid rgba(0, 0, 0, .2);
+}
+
+.bet-value-input {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.bet-value-input img {
+  width: 55px;
+}
+
+#betValue {
+  border: none;
+  outline: none;
+  margin: 0;
+  background-color: var(--grey);
+  color: white;
+  padding: 10px;
+  width: 100%;
+}
+
+.bet-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  width: 500px;
+  margin-right: 6px;
+}
+
+.bet-value-button {
+  background-color: #383D46;
+  border: none;
+  padding: 11px 16px;
+  border-radius: 6px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.clear {
+  background-color: transparent;
+}
+
+.bet-placing-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.red-bet,
+.green-bet,
+.black-bet {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 6px;
+  width: 30%;
+  height: 90%;
+}
+
+.red-bet button,
+.green-bet button,
+.black-bet button {
+  border: none;
+  width: 100%;
+  color: white;
+  height: 60px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 6px;
+  transition: .3s;
+  font-weight: 700;
+}
+
+.red-bet button {
+  background-color: var(--redBet);
+  box-shadow: 0 3px 0 0 #c42918;
+}
+
+.green-bet button {
+  background-color: var(--greenBet);
+  box-shadow: 0 3px 0 0 #389248;
+}
+
+.black-bet button {
+  background-color: var(--blackBet);
+  box-shadow: 0 3px 0 0 #161313;
+}
+
+.red-bet button:hover,
+.green-bet button:hover,
+.black-bet button:hover {
+  opacity: .8;
+}
+
+.coins-bet-red,
+.coins-bet-green,
+.coins-bet-black {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 30px;
+  width: 90%;
+  color: white;
+  margin-bottom: 10px;
+  font-weight: 400;
+}
+
+.coins-bet-red img,
+.coins-bet-green img,
+.coins-bet-black img {
+  width: 8%;
+}
+
+img.coins-image {
+  width: 35px;
+  height: 35px;
+}
+
+#black-bets-container,
+#green-bets-container,
+#red-bets-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 420px;
+  width: 100%;
+  overflow: hidden;
+}
+.green-bets,
+.red-bets,
+.black-bets {
+  width: 100%;
+}
+
+.user-bet {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  color: white;
+}
+
+.user-bet .user-avatar {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+}
+
+.user-avatar img {
+  width: 24px;
+  height: 24px;
+}
+
+.user-bet .bet-amount {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+}
+
+.bet-amount {
+  font-weight: 400;
+}
+
+.user-bet .bet-amount img {
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+}
+/* Login/Register Panel */
+/* Login/Register Panel */
+/* Login/Register Panel */
+
+#login-panel,
+#register-panel {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 300px;
+  background-color: var(--grey);
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, .2);
+  z-index: 999;
+}
+
+#register-panel {
+  height: 420px;
+}
+
+.close-button {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, .2);
+  background-color: var(--grey);
+  padding: 4px 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.login-form,
+.register-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.login-form input,
+.register-form input {
+  height: 60px;
+  width: 80%;
+  background-color: var(--dark);
+  border: 1px solid rgba(0, 0, 0, .2);
+  border-radius: 6px;
+  overflow: hidden;
+  padding: 10px;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.login-form .submit-login-button,
+.register-form .submit-register-button {
+  height: 60px;
+  width: 80%;
+  background-color: var(--blueButton);
+  border: 1px solid rgba(0, 0, 0, .2);
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.login-form .submit-login-button:hover,
+.register-form .submit-register-button:hover {
+  background-color: #2a7edd;
 }
