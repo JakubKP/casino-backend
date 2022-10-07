@@ -1,33 +1,50 @@
 import { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useSpring, animated } from 'react-spring'
+import { FaSignOutAlt, FaComments } from 'react-icons/fa';
 import Login from '../components/Login'
 import Register from '../components/Register'
 import RouletteSpinner from '../images/numbers.png'
 import Message from '../components/Message'
 import coinsImage from '../images/coins.png'
 import Bet from '../components/Bet'
+import LastBet from '../components/LastBet'
 import { toast } from 'react-toastify'
 import { isLogged, logout } from '../features/auth/authSlice'
-import { getBets, getCoins, sendBet, coinsReset, resetBets, afterRoundReset, addBet } from '../features/bets/betsSlice'
+import { getBets, getCoins, sendBet, coinsReset, resetBets, afterRoundReset, addBet, redUpdate, blackUpdate, greenUpdate, freeCoins } from '../features/bets/betsSlice'
 import { getMessages, sendMessage, resetMessages, addMessage } from '../features/messages/messagesSlice'
 import io from 'socket.io-client'
 const socket = io.connect(`http://localhost:${process.env.PORT || 5000}`)
 
+function Number({ n }) {
+  const { number } = useSpring({
+    from: { number: 0 },
+    number: n,
+    delay: 300,
+  })
+  return <animated.div>{number.to((n) => n.toFixed(0))}</animated.div>
+}
+
 function Main() {
+  const [winner, setWinner] = useState('')
   const [login, setLogin] = useState(false)
   const [register, setRegister] = useState(false)
+  const [chatActive, setChatActive] = useState(true)
   const [betValue, setBetValue] = useState(0)
   const [rouletteNumber, setRouletteNumber] = useState('')
   const [timerActive, setTimerActive] = useState('flex')
   const [rollActive, setRollActive] = useState(false)
   const [timer, setTimer] = useState(0)
   const [message, setMessage] = useState('')
+  const [afterRoundColorBlack, setAfterRoundColorBlack] = useState('white')
+  const [afterRoundColorGreen, setAfterRoundColorGreen] = useState('white')
+  const [afterRoundColorRed, setAfterRoundColorRed] = useState('white')
 
   const dispatch = useDispatch()
 
   const { user, messageAuth, isError } = useSelector((state) => state.auth)
   const { messages, isSuccessMessage, isErrorMessage, messageMessage } = useSelector((state) => state.message)
-  const { coins, isSuccessBet, isErrorBet, messageBet, isLoadingBet, redBet, blackBet, greenBet, bets } = useSelector((state) => state.bet)
+  const { coins, isSuccessBet, isErrorBet, messageBet, isLoadingBet, redBet, blackBet, greenBet, bets, betsHistory } = useSelector((state) => state.bet)
 
   const loginClick = () => {
     setLogin(true)
@@ -50,6 +67,10 @@ function Main() {
   const logoutClick = () => {
     dispatch(logout())
     dispatch(coinsReset())
+  }
+
+  const chatToggle = () => {
+    setChatActive(prevState => !prevState)
   }
 
   const makeRedBet = (e) => {
@@ -90,6 +111,10 @@ function Main() {
     }))
   }
 
+  const getFreeCoins = () => {
+    dispatch(freeCoins())
+  }
+
   useEffect(() => {
     dispatch(getMessages())
     dispatch(getBets())
@@ -103,6 +128,46 @@ function Main() {
       setRouletteNumber(`-${data.position}`)
 
       setTimeout(() => {
+        if(data.random === 'red') {
+          setAfterRoundColorBlack('red')
+          setAfterRoundColorRed('green')
+          setAfterRoundColorGreen('red')
+          setWinner('red')
+          document.querySelectorAll('.black-bets .user-bet .bet-amount div').forEach(element => {
+            element.textContent = `-${element.textContent}`
+          })
+          document.querySelectorAll('.green-bets .user-bet .bet-amount div').forEach(element => {
+            element.textContent = `-${element.textContent}`
+          })
+          dispatch(redUpdate())
+        } else if (data.random === 'green') {
+          setAfterRoundColorBlack('red')
+          setAfterRoundColorRed('red')
+          setAfterRoundColorGreen('green')
+          setWinner('green')
+          document.querySelectorAll('.black-bets .user-bet .bet-amount div').forEach(element => {
+            element.textContent = `-${element.textContent}`
+          })
+          document.querySelectorAll('.red-bets .user-bet .bet-amount div').forEach(element => {
+            element.textContent = `-${element.textContent}`
+          })
+          dispatch(greenUpdate())
+        } else if (data.random === 'black') {
+          setAfterRoundColorBlack('green')
+          setAfterRoundColorRed('red')
+          setAfterRoundColorGreen('red')
+          setWinner('black')
+          document.querySelectorAll('.red-bets .user-bet .bet-amount div').forEach(element => {
+            element.textContent = `-${element.textContent}`
+          })
+          document.querySelectorAll('.green-bets .user-bet .bet-amount div').forEach(element => {
+            element.textContent = `-${element.textContent}`
+          })
+          dispatch(blackUpdate())
+        }
+      }, 5000)
+
+      setTimeout(() => {
         setRouletteNumber('0')
         if(user !== null && user !== '' && user !== "") {
           dispatch(getCoins())
@@ -110,8 +175,12 @@ function Main() {
         dispatch(afterRoundReset())
         setTimerActive('flex')
         setRollActive(false)
+        setAfterRoundColorBlack('white')
+        setAfterRoundColorRed('white')
+        setAfterRoundColorGreen('white')
+        setWinner('')
         dispatch(getBets())
-      }, 6000)
+      }, 6500)
     })
 
     socket.on('receive_message', (data) => {
@@ -146,10 +215,6 @@ function Main() {
   }, [ dispatch, user ])
 
   useEffect(() => {
-    if(isErrorBet) {
-      toast.error(messageBet)
-      dispatch(resetBets())
-    }
 
     if(user === null) {
       dispatch(isLogged())
@@ -166,6 +231,16 @@ function Main() {
     if(isErrorMessage) {
       toast.error(messageMessage)
       dispatch(resetMessages())
+    }
+
+    if(isErrorBet) {
+      toast.error(messageBet)
+      dispatch(resetBets())
+    }
+
+    if(isSuccessBet) {
+      toast.success(messageBet)
+      dispatch(resetBets())
     }
 
     if(isError) {
@@ -202,7 +277,7 @@ function Main() {
     if(a.bet < b.bet) return -1;
     return 0;
 }).map((bet, index) => (
-    <Bet userName={bet.userName} amount={bet.bet} key={index}/>
+    <Bet userName={bet.userName} amount={winner === 'red' ? bet.bet * 2 : bet.bet} key={index}/>
   ))).reverse()
 
   const greenBets = (bets.filter(bet => bet.type === 'green').sort((a,b) => {
@@ -210,7 +285,7 @@ function Main() {
     if(a.bet < b.bet) return -1;
     return 0;
 }).map((bet, index) => (
-    <Bet userName={bet.userName} amount={bet.bet} key={index}/>
+    <Bet userName={bet.userName} amount={winner === 'green' ? bet.bet * 14 : bet.bet} key={index}/>
   ))).reverse()
 
   const blackBets = (bets.filter(bet => bet.type === 'black').sort((a,b) => {
@@ -218,8 +293,42 @@ function Main() {
     if(a.bet < b.bet) return -1;
     return 0;
 }).map((bet, index) => (
-    <Bet userName={bet.userName} amount={bet.bet} key={index}/>
+    <Bet userName={bet.userName} amount={winner === 'black' ? bet.bet * 2 : bet.bet} key={index}/>
   ))).reverse()
+
+  const history = betsHistory.map((bet, index) => (
+    <LastBet color={bet.result} key={index}/>
+  ))
+
+  const lastHundredRed = function () {
+    let number = 0
+    betsHistory.forEach(bet => {
+      if(bet.result === 'red') {
+        number++
+      }
+    })
+    return number
+  }()
+
+  const lastHundredGreen = function () {
+    let number = 0
+    betsHistory.forEach(bet => {
+      if(bet.result === 'green') {
+        number++
+      }
+    })
+    return number
+  }()
+
+  const lastHundredBlack = function () {
+    let number = 0
+    betsHistory.forEach(bet => {
+      if(bet.result === 'black') {
+        number++
+      }
+    })
+    return number
+  }()
 
   return (
     <>
@@ -228,18 +337,30 @@ function Main() {
       <div className='header'>
         {user ? (
           <>
-           <div className='user-name'>
-           Your logged as {user}
-           </div>
-           <div className='user-coins'>
+          <div className='user-coins-container'>
+            <button id='free-coins' onClick={getFreeCoins}>
+              Free coins
+            </button>
+            <div className='user-coins'>
             <img src={coinsImage} alt='coins' className='coins-image-header'/>
             <div>{coins.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
             </div>
+          </div>
           </>
         ) : null}
           <div className='header-buttons'>
           {user ? (
-          <button onClick={logoutClick} className='logout'>Logout</button> 
+            <>
+           <div className='user-name'>
+           Your logged as {user}
+           </div>
+           <button onClick={chatToggle} className='chat-toggle-header'>
+              <FaComments />
+           </button> 
+           <button onClick={logoutClick} className='logout'>
+              <FaSignOutAlt />
+           </button>
+            </>
           ) : (
             <>
             <button onClick={loginClick} id='loginButton'>Sign In</button>
@@ -248,7 +369,7 @@ function Main() {
           )}
           </div>
         </div>
-        <div className='chat'>
+        <div className={chatActive ? 'chat chat-active' : 'chat'}>
             <div id='chat-container'>
                 {chatMessages}
             </div>
@@ -261,14 +382,48 @@ function Main() {
                 Sign in to chat
               </div>
             )}
-        </div>
-        <div className='roulette'>
+            <button className='chat-toggle' onClick={chatToggle}>
+              <FaComments />
+            </button>
+            </div>
+        <div className='roulette' style={!chatActive ? {
+          width: '100%'
+        } : null}>
+          <div className='left-brick'>
+          </div>
+          <div className='right-brick'>
+          </div>
+            <div className='last-100-container'>
+              <div className='text'>
+                Last 100
+              </div>
+              <div className='last-100-red'>
+                <div className='red-dot'>
+                </div>
+                <div>{lastHundredRed}</div>
+              </div>
+              <div className='last-100-green'>
+                <div className='green-dot'>
+                </div>
+                <div>{lastHundredGreen}</div>
+              </div>
+              <div className='last-100-black'>
+                <div className='black-dot'>
+                </div>
+                <div>{lastHundredBlack}</div>
+              </div>
+            </div>
             <div className={rollActive ? 'roulette-container active-roll' : 'roulette-container'}>
                 <div className='roulette-timer' style={rouletteTimer}>
                   Rolling in {timer === 0 ? '...' : timer}
                 </div>
                 <div className='roulette-wheel' style={rouletteStyles} >
                 </div>
+            </div>
+            <div id='bet-history-container'>
+              <div id='bet-history'>
+                {history}
+              </div>
             </div>
             <div className='roulette-panel'>
               <div className='bet-value-section'>
@@ -288,14 +443,19 @@ function Main() {
                 </div>
               </div>
               <div className='bet-placing-section'>
-                <div className='red-bet'>
+                <div className='red-bet' style={rollActive ? {
+                  opacity: afterRoundColorRed === 'green' ? '1' : '0.4',
+                }: null}>
                   <button disabled={rollActive ? true : false} onClick={makeRedBet} style={rollActive ? {
-                    opacity: '0.4',
                     cursor: 'not-allowed',
                   } : null}>Place Bet</button>
-                  <div className='coins-bet-red'>
+                  <div className='coins-bet-red' style={{
+                    color: afterRoundColorRed,
+                  }}>
                       <img src={coinsImage} alt='coins' />
-                      <div>{redBet}</div>
+                      <Number n={redBet} style={{
+                        color: 'red',
+                      }}/>
                   </div>
                   <div id='red-bets-container'>
                   <div className='red-bets'>
@@ -303,14 +463,17 @@ function Main() {
                   </div>
                   </div>
                 </div>
-                <div className='green-bet'>
+                <div className='green-bet' style={rollActive ? {
+                  opacity: afterRoundColorGreen === 'green' ? '1' : '0.4',
+                }: null}>
                   <button disabled={rollActive ? true : false} onClick={makeGreenBet} style={rollActive ? {
-                    opacity: '0.4',
                     cursor: 'not-allowed',
                   } : null}>Place Bet</button>
-                  <div className='coins-bet-green'>
+                  <div className='coins-bet-green' style={{
+                    color: afterRoundColorGreen,
+                  }}>
                     <img src={coinsImage} alt='coins' />
-                    <div>{greenBet}</div>
+                    <Number n={greenBet}/>
                   </div>
                   <div id='green-bets-container'>
                     <div className='green-bets'>
@@ -318,14 +481,17 @@ function Main() {
                     </div>
                   </div>
                 </div>
-                <div className='black-bet'>
+                <div className='black-bet' style={rollActive ? {
+                  opacity: afterRoundColorBlack === 'green' ? '1' : '0.4',
+                }: null}>
                   <button disabled={rollActive ? true : false} onClick={makeBlackBet} style={rollActive ? {
-                    opacity: '0.4',
                     cursor: 'not-allowed',
                   } : null}>Place Bet</button>
-                  <div className='coins-bet-black'>
+                  <div className='coins-bet-black' style={{
+                    color: afterRoundColorBlack,
+                  }}>
                     <img src={coinsImage} alt='coins' />
-                    <div>{blackBet}</div>
+                    <Number n={blackBet}/>
                   </div>
                   <div id='black-bets-container'>
                   <div className='black-bets'>

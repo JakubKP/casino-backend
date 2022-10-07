@@ -23,10 +23,19 @@ const getBets = async () => {
 
     return response.data
 }
+
+// Free coins
+const freeCoins = async () => {
+    const response = await axios.post(`http://localhost:5000${API_URL}freecoins`)
+
+    return response.data
+}
+
 const authService = {
     sendBet,
     getCoins,
     getBets,
+    freeCoins,
 }
 
 export default authService

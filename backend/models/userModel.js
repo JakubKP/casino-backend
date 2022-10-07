@@ -18,6 +18,10 @@ const userSchema = mongoose.Schema({
         type: Number,
         required: true,
     },
+    bonusClaim: {
+        type: Number,
+        required: true,
+    },
 },
 {
     timestamps: true,

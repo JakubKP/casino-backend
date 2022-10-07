@@ -10,6 +10,18 @@ const sendMessage = asyncHandler(async (req, res) => {
 
         const { message } = req.body
 
+        if(message.length > 42) {
+            return res.status(400).json({
+                message: 'Message is too long'
+            }).send()
+        }
+
+        if(typeof(message) !== 'string') {
+            return res.status(400).json({
+                message: 'Bad message type'
+            }).send()
+        }
+
         const date = new Date()
         const time = `
          ${date.getHours() < 10 ? '0' + String(date.getHours()) : date.getHours()}:${date.getMinutes() < 10 ? '0' + String(date.getMinutes()) : date.getMinutes()}:${date.getSeconds() < 10 ? '0' + String(date.getSeconds()) : date.getSeconds()}`
@@ -41,7 +53,7 @@ const getMessages = asyncHandler(async (req, res) => {
 
     try {
 
-        const lastMessages = await (await Message.find().sort({_id: -1}).limit(10).select('userName message hour -_id')).reverse()
+        const lastMessages = await (await Message.find().sort({_id: -1}).limit(20).select('userName message hour -_id')).reverse()
 
         if(lastMessages) {
             res.status(201)

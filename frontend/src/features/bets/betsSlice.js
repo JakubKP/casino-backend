@@ -3,6 +3,7 @@ import betsService from './betsService'
 
 const initialState = {
     bets: [],
+    betsHistory: [],
     coins: 0,
     redBet: 0,
     blackBet: 0,
@@ -19,6 +20,7 @@ export const sendBet = createAsyncThunk('bet/sendBet', async (bet, thunkAPI) => 
         return await betsService.sendBet(bet)
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+
         return thunkAPI.rejectWithValue(message)
     }
 })
@@ -30,7 +32,6 @@ export const getCoins = createAsyncThunk('bet/getCoins', async (thunkAPI) => {
         return await betsService.getCoins()
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
-        console.log(message)
         return thunkAPI.rejectWithValue(message)
     }
 })
@@ -39,6 +40,16 @@ export const getCoins = createAsyncThunk('bet/getCoins', async (thunkAPI) => {
 export const getBets = createAsyncThunk('bet/getBets', async (thunkAPI) => {
     try {
         return await betsService.getBets()
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+        return thunkAPI.rejectWithValue(message)
+    }
+})
+
+// Free coins
+export const freeCoins = createAsyncThunk('bet/freeCoins', async (data, thunkAPI) => {
+    try {
+        return await betsService.freeCoins()
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
         return thunkAPI.rejectWithValue(message)
@@ -66,7 +77,22 @@ export const betSlice = createSlice({
         },
         addBet: (state, action) => {
             state.bets = [...state.bets, action.payload]
-        }
+        },
+        redUpdate: (state) => {
+            state.redBet = state.redBet * 2
+            state.blackBet = 0
+            state.greenBet = 0
+        },
+        greenUpdate: (state) => {
+            state.greenBet = state.greenBet * 14
+            state.blackBet = 0
+            state.redBet = 0
+        },
+        blackUpdate: (state) => {
+            state.blackBet = state.blackBet * 2
+            state.greenBet = 0
+            state.redBet = 0
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -95,11 +121,21 @@ export const betSlice = createSlice({
                 state.coins = action.payload.coins
             })
             .addCase(getBets.fulfilled, (state, action) => {
-                state.bets = action.payload
+                state.bets = action.payload.bets
+                state.betsHistory = action.payload.betsHistory
+            })
+            .addCase(freeCoins.fulfilled, (state, action) => {
+                state.coins = action.payload.coinsAfterAdd
+                state.isSuccessBet = true
+                state.messageBet = action.payload.message
+            })
+            .addCase(freeCoins.rejected, (state, action) => {
+                state.isErrorBet = true
+                state.messageBet = action.payload
             })
     }
 })
 
 
-export const { resetBets, coinsReset, afterRoundReset, addBet } = betSlice.actions
+export const { resetBets, coinsReset, afterRoundReset, addBet, redUpdate, greenUpdate, blackUpdate } = betSlice.actions
 export default betSlice.reducer

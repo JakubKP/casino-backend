@@ -22,6 +22,7 @@
   height: 100vh;
   width: 100%;
   overflow: hidden;
+  background-color: var(--dark);
 }
 
 #blur {
@@ -53,6 +54,18 @@
   width: 100%;
   height: 73px;
   background-color: var(--grey);
+  z-index: 1111;
+}
+
+.user-coins-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 380px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .user-name,
@@ -61,16 +74,13 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  right: 200px;
-  top: 0;
   color: white;
   height: 100%;
   font-size: 14px;
 }
 
 .user-coins {
-  right: 400px;
+  font-weight: 500;
 }
 
 .header-buttons {
@@ -93,6 +103,14 @@
   padding: 15px;
 }
 
+.chat-toggle-header {
+  display: none;
+}
+
+.chat-toggle-header svg {
+  font-size: 30px;
+}
+
 .coins-image-header {
   margin-right: 10px;
   width: 35px;
@@ -110,9 +128,16 @@
 }
 
 button.logout {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   background-color: var(--blueButton);
   border-radius: 6px;
   transition: .3s;
+  margin-left: 12px;
+  padding: 14px 26px;
+  font-size: 18px;
 }
 
 button.logout:hover {
@@ -125,16 +150,21 @@ button.logout:hover {
 
 .chat {
   position: absolute;
-  left: 0;
-  top: 73px;
+  left: -360px;
+  bottom: 0;
   width: 360px;
   height: 864px;
+  transition: .3s;
+}
+
+.chat-active {
+  left: 0;
 }
 
 #chat-container {
   position: absolute;
   left: 0;
-  top: 0;
+  bottom: 64px;
   width: 100%;
   height: 800px;
   background-color: var(--grey);
@@ -150,6 +180,7 @@ button.logout:hover {
   width: 100%;
   background-color: var(--grey);
   border-top: 1px solid grey;
+  border-bottom: 1px solid grey;
 }
 
 .login-chat {
@@ -157,6 +188,7 @@ button.logout:hover {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  color: white;
 }
 
 .chat form input {
@@ -183,7 +215,7 @@ button.logout:hover {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   height: 100%;
   flex-grow: 1;
   padding: 4px;
@@ -222,24 +254,134 @@ button.logout:hover {
   height: 70px;
 }
 
+.chat-toggle {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 100%;
+  bottom: 0;
+  width: 64px;
+  height: 64px;
+  background-color: var(--grey);
+  border-radius: 0 6px 6px 0;
+  z-index: 1151;
+  border: 1px solid grey;
+  border-left: none;
+  font-size: 40px;
+  cursor: pointer;
+}
+
 /* Roulette */
 /* Roulette */
 /* Roulette */
 
+
+#free-coins {
+  background-color: var(--blueButton);
+  padding: 14px;
+  color: white;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: .3s;
+  margin-right: 12px;
+  border: none;
+}
+
+#free-coins:hover {
+  opacity: 0.8;
+}
+
+.last-100-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  left: 50%;
+  top: 30px;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 40px;
+  color: white;
+}
+
+.last-100-container .text {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.last-100-red,
+.last-100-green,
+.last-100-black {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.red-dot,
+.green-dot,
+.black-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.red-dot {
+  background-color: var(--redBet);
+}
+
+.green-dot {
+  background-color: var(--greenBet);
+}
+
+.black-dot {
+  background-color: var(--blackBet);
+}
+
 .roulette {
   position: absolute;
   right: 0;
-  bottom: 0;
-  height: calc(100vh - 73px);
+  top: 73px;
+  height: calc(100% - 73px);
   width: calc(100% - 360px);
   overflow: hidden;
   background-color: var(--dark);
+  transition: .3s;
+}
+
+.left-brick {
+  position: absolute;
+  left: 0;
+  top: 65px;
+  width: 30px;
+  height: 140px;
+  background-color: var(--dark);
+  z-index: 999;
+}
+
+.right-brick {
+  position: absolute;
+  right: 0;
+  top: 65px;
+  width: 30px;
+  height: 140px;
+  background-color: var(--dark);
+  z-index: 999;
 }
 
 .roulette-container {
   position: absolute;
   left: 50%;
-  top: 8%;
+  top: 69px;
   transform: translateX(-50%);
   width: 1472px;
   height: 100px;
@@ -272,6 +414,35 @@ button.logout:hover {
   background-color: yellow;
 }
 
+#bet-history-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  position: absolute;
+  top: 172px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 36px;
+  width: 77%;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+#bet-history {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.last-bet {
+  width: 24px;
+  height: 24px;
+  margin-right: 4px;
+  border-radius: 6px;
+}
+
 .roulette-panel {
   display: flex;
   flex-direction: column;
@@ -279,10 +450,10 @@ button.logout:hover {
   align-items: center;
   position: absolute;
   left: 50%;
-  bottom: 10px;
+  top: 210px;
   transform: translateX(-50%);
   width: 80%;
-  height: 640px;
+  height: 74%;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -302,7 +473,7 @@ input[type=number] {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 80%;
   background-color: var(--grey);
   overflow: hidden;
   border-radius: 6px;
@@ -363,6 +534,7 @@ input[type=number] {
   justify-content: space-around;
   align-items: center;
   flex-grow: 1;
+  max-height: 584px;
   width: 100%;
 }
 
@@ -371,11 +543,12 @@ input[type=number] {
 .black-bet {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   border-radius: 6px;
   width: 30%;
   height: 90%;
+  transition: .3s;
 }
 
 .red-bet button,
@@ -430,7 +603,8 @@ input[type=number] {
 .coins-bet-red img,
 .coins-bet-green img,
 .coins-bet-black img {
-  width: 8%;
+  height: 24px;
+  width: 24px;
 }
 
 img.coins-image {
@@ -441,17 +615,21 @@ img.coins-image {
 #black-bets-container,
 #green-bets-container,
 #red-bets-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  height: 420px;
+  flex-grow: 1;
   width: 100%;
   overflow: hidden;
 }
 .green-bets,
 .red-bets,
 .black-bets {
+  position: absolute;
+  left: 0;
+  top: 0;
   width: 100%;
 }
 
@@ -568,4 +746,128 @@ img.coins-image {
 .login-form .submit-login-button:hover,
 .register-form .submit-register-button:hover {
   background-color: #2a7edd;
+}
+
+@media (max-width: 1390px) {
+  .bet-buttons button:nth-child(2),
+  .bet-buttons button:nth-child(3),
+  .bet-buttons button:nth-child(4),
+  .bet-buttons button:nth-child(5) {
+    display: none;
+  }
+
+  .bet-buttons {
+    width: 240px;
+  }
+}
+
+@media (max-width: 1080px) {
+
+  .chat-toggle {
+    display: none;
+  }
+
+  .chat-toggle-header {
+    display: block;
+  }
+
+  .chat {
+    left: -100%;
+    width: 100%;
+    z-index: 1000;
+    height: 100%;
+  }
+
+  .chat-active {
+    left: 0;
+  }
+
+  .header-buttons {
+    right: 10px;
+  }
+  .user-coins-container {
+    left: 10px;
+  }
+}
+
+@media (max-width: 540px) {
+
+  .roulette-panel {
+    height: 65%;
+    justify-content: center;
+  }
+
+  #red-bets-container,
+  #green-bets-container,
+  #black-bets-container,
+  .bet-buttons button:nth-child(6),
+  .header-buttons .user-name {
+    display: none;
+  }
+
+  .red-bet,
+  .green-bet,
+  .black-bet {
+    width: 100%;
+    justify-content: center;
+  }
+
+  div.bet-placing-section {
+    max-height: 500px;
+    flex-direction: column;
+  }
+
+  .bet-buttons {
+    width: 200px;
+  }
+
+  .bet-value-input {
+    width: 100px;
+  }
+
+  img.coins-image {
+    width: 24px;
+    height: 24px;
+  }
+
+  .bet-value-section {
+    width: 100%;
+  }
+
+  button.logout {
+    padding: 12px;
+  }
+
+  #free-coins {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .user-coins {
+    font-size: 12px;
+  }
+}
+
+@media (max-height: 760px) and (max-width: 1080px) {
+  div.bet-placing-section {
+    max-height: 260px;
+  }
+
+  .roulette-panel {
+    height: 53%;
+    justify-content: space-between;
+  }
+
+  .red-bet button,
+  .green-bet button,
+  .black-bet button {
+    height: 40px;
+    width: 90%;
+  }
+}
+
+@media (min-height: 1000px) and (max-width: 1080px) {
+    #chat-container {
+    height: calc(100% - 73px);
+  }
 }

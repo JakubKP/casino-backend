@@ -128,7 +128,7 @@ setInterval(async () => {
                         })
                     }
                 })
-                ws.emit('send_draw', { position })
+                ws.emit('send_draw', { position, random })
                 spinNumber++
             }
         }

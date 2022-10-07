@@ -13,12 +13,24 @@ const registerUser = asyncHandler(async (req,res) => {
         throw new Error('Please add all fields')
     }
 
+    if(typeof(name) !== 'string' || typeof(email) !== 'string' || typeof(password) !== 'string') {
+        return res.status(400).json({
+            message: 'Bad request type'
+        }).send()
+    }
+
     // Check if user exist
     const userExist = await User.findOne({ email })
+    const nicknameExist = await User.findOne({ name })
 
     if(userExist) {
         res.status(400)
         throw new Error('User already exist')
+    }
+
+    if(nicknameExist) {
+        res.status(400)
+        throw new Error('Name already taken')
     }
 
     // Hash password
@@ -30,7 +42,8 @@ const registerUser = asyncHandler(async (req,res) => {
         name,
         email,
         password: hashedPassword,
-        coins: 10000,
+        coins: 0,
+        bonusClaim: Date.now() - 1000 * 60 * 60
     })
 
     if(user) {
@@ -50,6 +63,12 @@ const registerUser = asyncHandler(async (req,res) => {
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body
 
+    
+    if(typeof(email) !== 'string' || typeof(password) !== 'string') {
+        return res.status(400).json({
+            message: 'Bad request type'
+        }).send()
+    }
     // Check for user email
     const user = await User.findOne({ email })
 
