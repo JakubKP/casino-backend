@@ -48,7 +48,7 @@ const registerUser = asyncHandler(async (req,res) => {
 
     if(user) {
         res.status(201)
-            .cookie('token', generateToken(user.id,), { expires: new Date(Date.now() + (30*24*3600000)), httpOnly: true })
+            .cookie('token', generateToken(user.id,), { expires: new Date(Date.now() + (30*24*3600000)), httpOnly: true, sameSite: 'None', secure: true })
             .json(user.name)
             .send()
     } else {
