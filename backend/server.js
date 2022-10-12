@@ -36,6 +36,12 @@ const io = new Server(server, {
     }
 })
 
+const lastSpinNumber = async () => {
+    return await Result.findOne().sort({_id: -1}).select('drawNumber')
+}
+
+Promise.resolve(lastSpinNumber()).then(function(number) {global.spinNumber = number.drawNumber + 1})
+
 global.spinNumber = 0
 global.timeToSpin = 30
 
